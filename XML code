@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<ProductFact xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:noNamespaceSchemaLocation="productInStockFact.xsd">
+<calendar_dim>
+<calendarKey>1408</calendarKey>
+<fullDate>9/4/1996</fullDate>
+<dayOfWeek>Wednesday</dayOfWeek>
+<dayType>Weekday</dayType>
+<dayOfMonth>4</dayOfMonth>
+<month>9</month>
+<quarter>Q3</quarter>
+<year>1996</year>
+</calendar_dim>
+<calendar_dim>
+<calendarKey>1882</calendarKey>
+<fullDate>2/24/1998</fullDate>
+<dayOfWeek>Tuesday</dayOfWeek>
+<dayType>Weekday</dayType>
+<dayOfMonth>24</dayOfMonth>
+<month>2</month>
+<quarter>Q1</quarter>
+<year>1998</year>
+</calendar_dim>
+<product_dim>
+<productKey>193</productKey>
+<productId>39</productId>
+<productName>Chartreuse verte</productName>
+<unitPrice>18</unitPrice>
+<discontinued>0</discontinued>
+</product_dim>
+<product_dim>
+<productKey>155</productKey>
+<productId>1</productId>
+<productName>Chai</productName>
+<unitPrice>18</unitPrice>
+<discontinued>0</discontinued>
+</product_dim>
+<categories_dim>
+<categoriesKey>19</categoriesKey>
+<categoriesId>1</categoriesId>
+<categoryName>Beverages</categoryName>
+<catDescription>Soft drinks, coffees, teas, beers, and ales</catDescription>
+</categories_dim>
+<categories_dim>
+<categoriesKey>26</categoriesKey>
+<categoriesId>8</categoriesId>
+<categoryName>Seafood</categoryName>
+<catDescription>Seaweed and fish</catDescription>
+</categories_dim>
+<supplier_dim>
+<supplierKey>78</supplierKey>
+<supplierId>18</supplierId>
+<companyName>Aux joyeux ecclésiastiques</companyName>
+<contactName>Guylène Nodier</contactName>
+<contactTitle>Sales Manager</contactTitle>
+<supplier_address>
+<supplierAddress>203, Rue des Francs-Bourgeois</supplierAddress>
+<city>Paris</city>
+<region></region>
+<postalCode>75004</postalCode>
+<country>France</country>
+</supplier_address>
+<phoneNo>(1) 03.83.00.68</phoneNo>
+</supplier_dim>
+<supplier_dim>
+<supplierKey>61</supplierKey>
+<supplierId>1</supplierId>
+<companyName>Exotic Liquids</companyName>
+<contactName>Charlotte Cooper</contactName>
+<contactTitle>Purchasing Manager</contactTitle>
+<supplier_address>
+<supplierAddress>49 Gilbert St.</supplierAddress>
+<city>London</city>
+<region></region>
+<postalCode>EC1 4SD</postalCode>
+<country>UK</country>
+</supplier_address>
+<phoneNo>(171) 555-2222</phoneNo>
+</supplier_dim>
+<productinstock_fact>
+<calendarKey>1408</calendarKey>
+<productKey>193</productKey>
+<categoriesKey>19</categoriesKey>
+<supplierKey>78</supplierKey>
+<unitsInStock>69</unitsInStock>
+<unitsOnOrder>0</unitsOnOrder>
+<reorderLevel>5</reorderLevel>
+<totalQuantity>60</totalQuantity>
+<orderId>10297</orderId>
+</productinstock_fact>
+<productinstock_fact>
+<calendarKey>1882</calendarKey>
+<productKey>155</productKey>
+<categoriesKey>26</categoriesKey>
+<supplierKey>61</supplierKey>
+<unitsInStock>39</unitsInStock>
+<unitsOnOrder>0</unitsOnOrder>
+<reorderLevel>10</reorderLevel>
+<totalQuantity>20</totalQuantity>
+<orderId>10905</orderId>
+</productinstock_fact>
+</ProductFact>
