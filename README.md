@@ -56,7 +56,9 @@ This is a sample pie chart that can be used to determine graphical representatio
 
 ### Total product quantities ordered in the USA  compared Quarterly :
 As the title suggests, this box plot contains the maximum ,minimum and median values of the quantity of products ordered belonging to a specific category and displayed quarterly. It shows that only four categories of products are ordered from the USA, out of which Beverages and Seafood contain the highest quantities. Category produce contains only one product that is ordered in the USA thus having a flat line for the box plot. This graph can be used to strategize the business goals to enhance sales and improve order quantities in the USA.
+![v4](https://user-images.githubusercontent.com/46936497/61000921-63e55680-a356-11e9-8b02-17ab24febd35.png)
 
+### SSRS Reports:
 
 
 
