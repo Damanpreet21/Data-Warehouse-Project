@@ -1,0 +1,193 @@
+### Units in stock vs units on order
+#connection
+install.packages("RODBC")
+library(RODBC)
+conn = odbcDriverConnect('driver={SQL Server};server=DESKTOP-S0UPSRB\\SQLEXPRESS;
+                         
+                         database=NW_Trading_DW; trusted_connection=true;')
+
+
+
+data1 = sqlQuery(conn, "select ProductName, sum(psf.UnitsInStock) UnitsInStock, sum(psf.UnitsOnOrder)
+UnitsOnOrder
+from ProductInStock_Fact psf
+inner join Categories_Dim c
+on psf.CategoriesKey = c.CategoriesKey
+inner join Product_Dim p
+on psf.ProductKey = p.Productkey
+where Categoryname = 'Beverages'
+group by ProductName")
+par(mfrow = c(1,2), oma=c(0,6,1,0))
+barplot(data1$UnitsOnOrder,
+        xlab = "Product under Beverage" , xlim = c(0,6000),
+        main = "Units On Order",
+        names.arg = data1$ProductName,
+        col = "orange",
+        space = c(1,2),
+        srt = 90, xpd = TRUE,
+        horiz = TRUE, las = 1, cex.names = 0.8)
+barplot(data1$UnitsInStock,
+         xlab = "Product under Beverage" , xlim = c(0,6000),
+             main = "Units In Stock",
+            names.arg = data1$ProductName,
+            col = "steelblue1",
+            space = c(1,2),
+            srt = 90, xpd = TRUE,
+        horiz = TRUE, las = 1, cex.names = 0.8)
+
+
+
+title("Units on Orders and Units in Stock for all products under the category Beverages", outer=TRUE)
+
+
+
+
+
+### Shipping more than a week
+#connection
+install.packages("RODBC")
+library(RODBC)
+conn = odbcDriverConnect('driver={SQL Server};server=DESKTOP-S0UPSRB\\SQLEXPRESS;
+                         
+                         database=NW_Trading_DW; trusted_connection=true;')
+
+
+data <- sqlQuery(conn,"select  a.avg_day, a.country from
+(select avg(DATEDIFF(day,o.OrderDate,o.ShippedDate)) avg_day, o.ShipCountry as country
+from Northwind.dbo.Orders o
+where o.ShippedDate is not null 
+group by o.ShipCountry) a
+where a.avg_day > 7")
+par(mfrow=c(1,1) , oma=c(0,0,1,0))
+plot(data$avg_day,data$country,main = "Shipping more than a week(Countries)",
+     xlim = c(8,12), xlab="Average no.of delivery days",ylab="Country", type = "b", 
+     pch = 19, col = "red", lty = 4, 
+     las = 1)
+text(data$avg_day,data$country,labels = data$country,  cex=0.7, pos=4, col="Black")
+
+
+
+### Sales of Category Produce (Q1)
+
+#connection
+install.packages("RODBC")
+library(RODBC)
+
+conn = odbcDriverConnect('driver={SQL Server};server=DESKTOP-S0UPSRB\\SQLEXPRESS;
+                         
+                         database=NW_Trading_DW; trusted_connection=true;')
+
+
+data1 = sqlQuery(conn, "select sum(od.UnitPrice*od.Quantity) As Sales, p.ProductName ,p.ProductID 
+ from ProductInStock_Fact pf
+inner join Northwind.dbo.[Order Details] od
+on pf.orderID = od.orderid
+inner join Calendar_Dim cal
+on pf.CalendarKey=cal.CalendarKey
+inner join Categories_Dim cat
+on pf.CategoriesKey=cat.CategoriesKey
+inner join Product_Dim p
+on pf.ProductKey = p.ProductKey
+where cal.Quarter_='Q1' and cat.CategoryId = 7 
+group by  p.ProductName, p.ProductID")
+
+
+
+Prod_name<- data1$ProductName
+Prod_sales<-data1$Sales
+
+#install.packages("ggplot2")
+#library(ggplot2)
+
+par(mfrow=c(1,1),mar=c(4,4,4,4))
+
+pie(Prod_sales, main = "Sales of Category Produce (Q1)", labels =paste("€",Prod_sales,"\n", Prod_name), cex = 0.7)
+      
+### Total product quantity ordered in the USA for all Categories quarterly
+#connection
+install.packages("RODBC")
+library(RODBC)
+
+conn = odbcDriverConnect('driver={SQL Server};server=DESKTOP-S0UPSRB\\SQLEXPRESS;
+                         
+                                 database=NW_Trading_DW; trusted_connection=true;')
+  
+  
+  
+data_cat1 = sqlQuery(conn,"select p.ProductID,sum(od.Quantity) Quantity, c.Quarter_
+from ProductInStock_Fact f
+                inner join Supplier_Dim s
+                on s.SupplierKey =  f.SupplierKey
+                inner join Product_Dim p
+                on p.ProductKey = f.ProductKey
+                inner join Northwind.dbo.[Order Details] od
+                on od.ProductID = p.ProductID
+                inner join Categories_Dim cd
+                on cd.CategoriesKey = f.CategoriesKey
+                inner join Northwind.dbo.Orders o
+                on o.OrderID = od.OrderID
+                inner join Calendar_Dim c
+                on o.OrderDate = c.FullDate
+                where s.Country = 'USA' and cd.CategoryId = 1
+                group by p.ProductID,c.Quarter_
+                order by p.ProductID,c.Quarter_")
+
+data_cat2 = sqlQuery(conn,"select p.ProductID,sum(od.Quantity) Quantity, c.Quarter_
+from ProductInStock_Fact f
+                inner join Supplier_Dim s
+                on s.SupplierKey =  f.SupplierKey
+                inner join Product_Dim p
+                on p.ProductKey = f.ProductKey
+                inner join Northwind.dbo.[Order Details] od
+                on od.ProductID = p.ProductID
+                inner join Categories_Dim cd
+                on cd.CategoriesKey = f.CategoriesKey
+                inner join Northwind.dbo.Orders o
+                on o.OrderID = od.OrderID
+                inner join Calendar_Dim c
+                on o.OrderDate = c.FullDate
+                where s.Country = 'USA' and cd.CategoryId = 2
+                group by p.ProductID,c.Quarter_
+                order by p.ProductID,c.Quarter_")
+
+data_cat3 = sqlQuery(conn,"select p.ProductID,sum(od.Quantity) Quantity, c.Quarter_
+from ProductInStock_Fact f
+                inner join Supplier_Dim s
+                on s.SupplierKey =  f.SupplierKey
+                inner join Product_Dim p
+                on p.ProductKey = f.ProductKey
+                inner join Northwind.dbo.[Order Details] od
+                on od.ProductID = p.ProductID
+                inner join Categories_Dim cd
+                on cd.CategoriesKey = f.CategoriesKey
+                inner join Northwind.dbo.Orders o
+                on o.OrderID = od.OrderID
+                inner join Calendar_Dim c
+                on o.OrderDate = c.FullDate
+                where s.Country = 'USA' and cd.CategoryId = 7
+                group by p.ProductID,c.Quarter_
+                order by p.ProductID,c.Quarter_")
+
+data_cat4 = sqlQuery(conn,"select p.ProductID,sum(od.Quantity) Quantity, c.Quarter_
+from ProductInStock_Fact f
+                inner join Supplier_Dim s
+                on s.SupplierKey =  f.SupplierKey
+                inner join Product_Dim p
+                on p.ProductKey = f.ProductKey
+                inner join Northwind.dbo.[Order Details] od
+                on od.ProductID = p.ProductID
+                inner join Categories_Dim cd
+                on cd.CategoriesKey = f.CategoriesKey
+                inner join Northwind.dbo.Orders o
+                on o.OrderID = od.OrderID
+                inner join Calendar_Dim c
+                on o.OrderDate = c.FullDate
+                where s.Country = 'USA' and cd.CategoryId = 8
+                group by p.ProductID,c.Quarter_
+                order by p.ProductID,c.Quarter_")
+par(mfrow=c(2,2), oma=c(0,0,1,0))
+plot(data_cat1$Quarter_,data_cat1$Quantity,col="seagreen2", type = "l", main="Category Beverages(1)")
+plot(data_cat2$Quarter_,data_cat2$Quantity,col="slategray1", type = "l", main="Category Condiments(2)")
+plot(data_cat3$Quarter_,data_cat3$Quantity,col="red", type = "l", main="Category Produce(7)")
+plot(data_cat4$Quarter_,data_cat4$Quantity,col="wheat2", type = "l", main="Category Seafood(8)")
+title("Total product quantity ordered in the USA for all Categories quarterly", outer=TRUE)
