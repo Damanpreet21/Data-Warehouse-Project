@@ -52,6 +52,12 @@ This graph helps in analyzing the delivery times of shipment in different countr
 
 ### Sales of Products of Category Produce in the first quarter:
 This is a sample pie chart that can be used to determine graphical representation of the sales of various products belonging to various categories in different timelines. It can be used to compare the performance of different products or the same product in different quarter or years.
+![v3](https://user-images.githubusercontent.com/46936497/61000821-2f719a80-a356-11e9-8e2c-f3e12c6fe707.png)
+
+### Total product quantities ordered in the USA  compared Quarterly :
+As the title suggests, this box plot contains the maximum ,minimum and median values of the quantity of products ordered belonging to a specific category and displayed quarterly. It shows that only four categories of products are ordered from the USA, out of which Beverages and Seafood contain the highest quantities. Category produce contains only one product that is ordered in the USA thus having a flat line for the box plot. This graph can be used to strategize the business goals to enhance sales and improve order quantities in the USA.
+
+
 
 
 
