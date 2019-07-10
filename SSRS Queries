@@ -1,0 +1,63 @@
+### Discontinued products
+create procedure discontinued_product_report
+as
+select od.OrderID, cu.CustomerID,cu.CompanyName ,p.ProductID, p.ProductName, (od.Quantity * od.UnitPrice) sales
+from Product_Dim p 
+inner join Northwind.dbo.[Order Details] od
+on p.ProductID = od.ProductID
+inner join Northwind.dbo.[Orders] o
+on od.OrderID = o.OrderID
+inner join Calendar_Dim c
+on c.FullDate = o.OrderDate
+inner join Customer_Dim cu
+on o.CustomerID = cu.CustomerID
+where p.Discontinued = 1 and c.Year_ = '1998'
+order by p.ProductID
+go
+exec discontinued_product_report
+
+### Best and least selling product in each category:
+
+create proc top_least_selling_each_category
+ as
+ select sum(f.TotalQuantity)as total, p.ProductName,cat.CategoryName from ProductInStock_Fact f
+ inner join Product_Dim p
+ on f.ProductKey=p.ProductKey
+ inner join Categories_Dim cat
+ on cat.CategoriesKey= f.CategoriesKey
+ inner join Northwind.dbo.[Order Details] od
+ on od.OrderID=f.orderId
+ group by p.ProductName,cat.CategoryName
+ order by cat.CategoryName, total
+
+ exec top_least_selling_each_category
+
+
+### best employee
+
+create procedure Employee_sales
+as
+ select sum(f.Sales)  Total, em.FirstName, em.LastName, em.EmployeeID, cal.Year_
+ from CustomerEmployee_Fact f
+ inner join Employee_Dim em
+ on em.EmployeeID=f.Employeekey
+ inner join Calendar_Dim cal
+ on cal.CalendarKey=f.calendarkey
+ group by em.FirstName, em.LastName, em.Region, em.EmployeeID, cal.Year_
+ order by em.FirstName, em.LastName, em.EmployeeID
+ 
+### min max avg customer billing
+
+use NW_Trading_DW
+  create proc Max_min_avg_customer_sales
+  as
+  select c.CompanyName,c.CustomerID,cal.Year_,
+  min(f.Sales) as Minimum_Bill , max(f.Sales) as Maximum_Bill, AVG(f.Sales) as Average_Bill
+  from CustomerEmployee_Fact f
+  inner join Customer_Dim c
+  on c.CustomerKey=f.customerkey
+  inner join Calendar_Dim cal
+  on cal.CalendarKey=f.calendarkey
+  group by c.CompanyName, cal.Year_, c.CustomerID
+  order by c.CompanyName, c.CustomerID
+  
