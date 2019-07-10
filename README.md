@@ -21,6 +21,27 @@ The key stakeholders include the Employees, Customers and Suppliers.
 5.	Optimize delivery time.
 
 ## Design schema for the data warehouse:
+![schema](https://user-images.githubusercontent.com/46936497/61000136-a4dc6b80-a354-11e9-9ff2-ae97a9c6ac38.png)
 
+A Constellation/ Galaxy of stars in data warehouse modelling is a dimensional model having multiple facts. I have used this model to create a star schema with two fact tables. The dimensions and facts and their relations are displayed in the above schema that I have created using Lucid chart. 
+### Dimensions: 
+The information obtained from the dimension table is used to do the analysis. The dimension tables contain descriptive and numeric values. Each dimension  table has a unique Primary Key which is then used to create the linking relation with the fact tables.For the NW_Trading_DW the dimensions that I have created are Customer, Employee, Supplier which are also my key stakeholders. These contain various attributes that provide further information about the stake holders. These attributes are mentioned above and are  self-explanatory. The other dimensions are : 
+Product, which are being traded by Northwind, 
+Category, categories information in which the products are divided into,
+Calendar, which gives the date and time specific information of sales. It also gives a quarterly/ monthly or annual details. 
+### Fact Tables: 
+The fact tables usually contain numeric measures of the subject of analysis. I have created two aggregate fact tables:
+### 1.	CustomerEmployee_Fact:
+This fact table takes the Employee details from the Employee_Dim using EmployeeKey as foreign key , Similarly, Customer details from the Customer_Dim using  CustomerKey as foreign key and date and time specific details from the Calendar_Dim using CalendarKey as foreign key. This tables takes the dynamic value of Order Id from the source database Northwind. Together with the order id and the other three dimensions I have created an attribute of Sales that determines the total sales by each customer and the sales under each employee. This fact table can be used to determine the premium customers and best employees. Thus fulfilling the business requirements 2 and 3.This tables can be used to do specific time related analysis. Also, we can determine region specific sales and many other analysis few of which are displayed in the upcoming sections.
 
+### 2.	ProductInStock_Fact:
+This fact is used to keep a track of the units in stock and the units on order of each product based on its reorder level. This is done to maintain the correct balance of the products stocked to their orders. It helps implement the business requirement 1 mention in section 2.1.This fact takes the order details from the source database Northwind using the attribute orderid. It also takes the Product details from the Product_Dim using the productKey as foreign key. The category details from Categories_Dim using CategoriesKey as foreign key and date and time specific information from the Calendar_Dim similar to the CustomerEmployee_Fact. This fact table also takes the Supplier information from the Supplier_Dim the SupplierKey as Foreign key. This fact can be used to perform multiple analysis like the most selling product in each category and a few more mentioned in further sections. This fact helps fulfil requirement 4 and 5 from the business requirements section.
+
+## Implementing In SQL:
+To implement the Data Warehouse I have used SQL statements to create and insert values. Code attached.
+
+## Visualizations and R Code:
+
+### Units on Orders v/s Units in Stock(Category: Beverage) :
+This graph not only helps ensure the products are sufficiently stocked for timely deliveries but also helps the company take business decisions on overly stocked products. Tom improve the sales of such slow moving products the company can decide on discounts or offers on such products. To implement the J.I.T model, the company can further analyze as to why these products are overly stocked and create a better plan for product stocking. This in turn will reduce the warehousing cost and space.
 
