@@ -60,6 +60,6 @@ As the title suggests, this box plot contains the maximum ,minimum and median va
 
 ### SSRS Reports:
 
-
+[Discontinued Product Sales.pdf](https://github.com/Damanpreet21/Data-Warehouse-Project/files/3379450/Discontinued.Product.Sales.pdf)
 
 
