@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:element name="ProductFact">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element ref="calendar_dim" minOccurs="1" maxOccurs="unbounded" />
+<xsd:element ref="product_dim" minOccurs="1" maxOccurs="unbounded" />
+<xsd:element ref="categories_dim" minOccurs="1" maxOccurs="unbounded" />
+<xsd:element ref="supplier_dim" minOccurs="1" maxOccurs="unbounded" />
+<xsd:element ref="productinstock_fact" minOccurs="1" maxOccurs="unbounded" />
+</xsd:sequence>
+</xsd:complexType>
+<xsd:key name="calendar_key">
+<xsd:selector xpath="calendar_dim/calendarKey" />
+<xsd:field xpath="." />
+</xsd:key>
+<xsd:keyref name="calendar_key_ref" refer="calendar_key">
+<xsd:selector xpath="productinstock_fact/calendarKey" />
+<xsd:field xpath="." />
+</xsd:keyref>
+<xsd:key name="product_key">
+<xsd:selector xpath="product_dim/productKey" />
+<xsd:field xpath="." />
+</xsd:key>
+<xsd:keyref name="product_key_ref" refer="product_key">
+<xsd:selector xpath="productinstock_fact/productKey" />
+<xsd:field xpath="." />
+</xsd:keyref>
+<xsd:key name="categories_key">
+<xsd:selector xpath="categories_dim/categoriesKey" />
+<xsd:field xpath="." />
+</xsd:key>
+<xsd:keyref name="category_key_ref" refer="categories_key">
+<xsd:selector xpath="productinstock_fact/categoriesKey" />
+<xsd:field xpath="." />
+</xsd:keyref>
+<xsd:key name="supplier_key">
+<xsd:selector xpath="supplier_dim/supplierKey" />
+<xsd:field xpath="." />
+</xsd:key>
+<xsd:keyref name="supplier_key_ref" refer="supplier_key">
+<xsd:selector xpath="productinstock_fact/supplierKey" />
+<xsd:field xpath="." />
+</xsd:keyref>
+</xsd:element>
+<xsd:element name="calendar_dim">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element name="calendarKey" type="xsd:int" />
+<xsd:element name="fullDate" type="xsd:string" />
+<xsd:element name="dayOfWeek" type="xsd:string" />
+<xsd:element name="dayType" type="xsd:string" />
+<xsd:element name="dayOfMonth" type="xsd:float" />
+<xsd:element name="month" type="xsd:string" />
+<xsd:element name="quarter" type="xsd:string" />
+<xsd:element name="year" type="xsd:float" />
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="product_dim">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element name="productKey" type="xsd:int" />
+<xsd:element name="productId" type="xsd:int" />
+<xsd:element name="productName" type="xsd:string" />
+<xsd:element name="unitPrice" type="xsd:decimal" />
+<xsd:element name="discontinued" type="xsd:int" />
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="categories_dim">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element name="categoriesKey" type="xsd:int" />
+<xsd:element name="categoriesId" type="xsd:int" />
+<xsd:element name="categoryName" type="xsd:string" />
+<xsd:element name="catDescription" type="xsd:string" />
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:element name="supplier_dim">
+<xsd:complexType>
+<xsd:sequence>
+<xsd:element name="supplierKey" type="xsd:int" />
+<xsd:element name="supplierId" type="xsd:int" />
+<xsd:element name="companyName" type="xsd:string" />
+<xsd:element name="contactName" type="xsd:string" />
+<xsd:element name="contactTitle" type="xsd:string" />
+<xsd:element name="supplier_address" type="address_info" />
+<xsd:element name="phoneNo" type="xsd:string"/>
+</xsd:sequence>
+</xsd:complexType>
+</xsd:element>
+<xsd:complexType name="address_info">
+<xsd:sequence>
+<xsd:element name="supplierAddress" minOccurs="0" type="xsd:string" /> 
+<xsd:element name="city" type="xsd:string" /> 
+<xsd:element name="region" type="xsd:string" /> 
+<xsd:element name="postalCode" type="xsd:string" /> 
+<xsd:element name="country" type="xsd:string" /> 
+</xsd:sequence>
+</xsd:complexType>
+<xsd:element name="productinstock_fact">
+<xsd:complexType>
+<xsd:all>
+<xsd:element name="calendarKey" type="xsd:int" />
+<xsd:element name="productKey" type="xsd:int" />
+<xsd:element name="categoriesKey" type="xsd:int" />
+<xsd:element name="supplierKey" type="xsd:int" />
+<xsd:element name="unitsInStock" type="xsd:int" />
+<xsd:element name="unitsOnOrder" type="xsd:int" />
+<xsd:element name="reorderLevel" type="xsd:int" />
+<xsd:element name="totalQuantity" type="xsd:int" />
+<xsd:element name="orderId" type="xsd:int" />
+</xsd:all>
+</xsd:complexType>
+</xsd:element>
+</xsd:schema>
