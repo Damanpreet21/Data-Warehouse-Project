@@ -1,0 +1,244 @@
+USE NW_Trading_DW
+GO
+
+CREATE TABLE Employee_Dim 
+  (EmployeeKey INT NOT NULL IDENTITY,
+  EmployeeID int,
+  LastName varchar(20),
+  FirstName varchar(10),
+  BirthDate datetime,
+  HireDate datetime,
+  Region varchar(15),
+  Country varchar(15)
+PRIMARY KEY (EmployeeKey));
+
+
+
+CREATE TABLE Supplier_Dim (
+  SupplierKey INT NOT NULL IDENTITY ,
+  SupplierID int,
+  CompanyName varchar(50),
+  ContactName varchar(50),
+  ContactTitle varchar(50),
+  SupplierAddress varchar(50),
+  City varchar(50),
+  Region varchar(50),
+  PostalCode varchar(50),
+  Country varchar(50),
+  Phone varchar(50),
+PRIMARY KEY (SupplierKey));
+
+
+CREATE TABLE Calendar_Dim (
+  CalendarKey INT NOT NULL IDENTITY,
+  FullDate datetime,
+  Dayofweek_ char(15),
+  DayType char(20),
+  Dayofmonth_ int,
+  Month_ char(10),
+  Quarter_ char(2),
+  Year_ int,
+PRIMARY KEY (CalendarKey));
+
+
+
+CREATE TABLE Product_Dim (
+  ProductKey  INT NOT NULL IDENTITY,
+  ProductID varchar(5),
+  ProductName varchar(100),
+  UnitPrice int,
+  Discontinued int,
+PRIMARY KEY (ProductKey)
+);
+
+CREATE TABLE Customer_Dim (
+  CustomerKey INT NOT NULL IDENTITY ,
+  CustomerID varchar(10),
+  CompanyName char(50),
+  ContactName char(50),
+  ContactTitle char(50),
+  CustAddress varchar(60),
+  City varchar(20),
+ Region varchar(20),
+  PostalCode varchar(20),
+  Country varchar(20),
+  Phone varchar(20),
+PRIMARY KEY (CustomerKey));
+
+CREATE TABLE Categories_Dim (
+  CategoriesKey INT NOT NULL IDENTITY,
+  CategoryId int,
+  CategoryName varchar(50),
+  CatDescription  ntext,
+PRIMARY KEY (CategoriesKey)
+);
+
+Create table CustomerEmployee_Fact
+(customerkey int references customer_dim(customerKey),
+Employeekey int references employee_dim(employeeKey),
+calendarkey int references calendar_dim(calendarkey),
+orderid varchar(20),
+Sales money);
+
+CREATE TABLE ProductInStock_Fact (
+  CalendarKey int references Calendar_Dim(CalendarKey),
+  ProductKey int references Product_Dim(ProductKey),
+  CategoriesKey int references Categories_Dim(CategoriesKey),
+  Supplierkey int references Supplier_Dim(Supplierkey),
+  UnitsInStock int,
+ UnitsOnOrder int,
+  ReorderLevel int,
+  TotalQuantity int,
+  orderId varchar(20)
+);
+
+A.2. Insert into tables queries: 
+use NW_Trading_DW
+Go
+
+Populating Calender Dim
+INSERT INTO Calendar_Dim (FullDate, DayofWeek_, DayType, DayofMonth_, Month_, Quarter_, Year_)
+SELECT DISTINCT(CONVERT(varchar, o.OrderDate, 23)) date_ , DATENAME(dw,o.OrderDate), 
+Choose(DATEPART(dw,o.OrderDate),'Weekend','Weekday','Weekday','Weekday', 'Weekday','Weekday','Weekend'),
+DATEPART(day, o.OrderDate), MONTH(o.OrderDate), CONCAT('Q', DATEPART(q,o.OrderDate)), YEAR(o.OrderDate)
+FROM Northwind.dbo.[Orders] o;
+
+Populating Categories Dim
+Insert into Categories_Dim (CategoryId, CategoryName,CatDescription)
+select CategoryID,CategoryName,Description
+from Northwind.dbo.Categories;
+
+Populating Product Dim
+Insert into Product_Dim(ProductID, ProductName, UnitPrice, UnitsInStock, UnitsOnOrder, Discontinued)
+select ProductID, ProductName, UnitPrice, UnitsInStock, UnitsOnOrder, Discontinued
+from Northwind.dbo.Products;
+
+Populating Customer Dim
+Insert into Customer_Dim( CustomerID, CompanyName, ContactName, ContactTitle, CustAddress, City, Region, PostalCode, Country, Phone)
+select CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone
+from Northwind.dbo.[Customers];
+
+
+Populating Supplier Dim
+Insert into Supplier_Dim(SupplierID, CompanyName, ContactName, ContactTitle, SupplierAddress, City, Region, PostalCode,Country, Phone)
+select SupplierID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode,Country, Phone
+from Northwind.dbo.[Suppliers]
+
+Populating Employee Dim
+
+INSERT INTO Employee_Dim(EmployeeID, LastName, FirstName, BirthDate, HireDate, Region,Country)
+SELECT n.EmployeeID, n.LastName, n.FirstName, n.BirthDate, n.HireDate, n.Region,n.Country
+FROM Northwind.dbo.[Employees] n 
+
+Populating ProdctInStock Fact
+create table temp_1
+(CalendarKey int,
+ProductKey int,
+CategoriesKey int,
+SupplierKey int, OrderID varchar(20),
+ProductName nvarchar(40), ProductID int, OrderCount int, Quantity int, UnitsInStock int ,  UnitsOnOrder int, 
+ReorderLevel int,CategoryName varchar(50), CompanyName varchar(50),OrderDate date)
+
+INSERT INTO Temp_1(OrderID,ProductName, ProductID,OrderCount, Quantity, UnitsInStock, UnitsOnOrder, ReorderLevel,CategoryName,CompanyName,OrderDate)
+select o.OrderId, p.ProductName, od.ProductId,
+  count(od.ProductId) OrderCount, 
+  sum(od.Quantity) as TotalQuantity,
+  p.UnitsInStock, p.UnitsOnOrder, p.ReorderLevel, c.CategoryName, s.CompanyName,o.OrderDate
+    from Northwind.dbo.[Order Details] od
+    join Northwind.dbo.[Products] p 
+      on p.ProductID= od.ProductID
+	  inner join Northwind.dbo.Orders o
+	  on o.OrderID = od.OrderID
+	  inner join Northwind.dbo.[Categories] c
+	  on p.CategoryID = c.CategoryID
+	  inner join Northwind.dbo.Suppliers s
+	  on p.SupplierID = s.SupplierID
+    group by o.OrderID,p.ProductName,od.ProductId, p.UnitsInStock, p.UnitsOnOrder, p.ReorderLevel, c.CategoryName, s.CompanyName, o.OrderDate
+	order by TotalQuantity desc
+
+
+	
+
+
+UPDATE temp_1
+SET CalendarKey = c.CalendarKey
+FROM Calendar_Dim c
+WHERE temp_1.OrderDate = c.FullDate
+
+UPDATE temp_1
+SET ProductKey = p.ProductKey
+FROM Product_Dim p
+WHERE temp_1.ProductID = p.ProductID
+
+
+UPDATE temp_1
+SET CategoriesKey = c.CategoriesKey
+FROM Categories_Dim c
+WHERE temp_1.CategoryName = c.CategoryName
+
+Update temp_1
+SET SupplierKey = s.SupplierKey
+FROM Supplier_Dim s
+Where temp_1.CompanyName = s.CompanyName
+
+
+
+
+
+Insert into ProductInStock_Fact(CalendarKey,ProductKey, CategoriesKey, SupplierKey, UnitsinStock, UnitsOnOrder,ReorderLevel, TotalQuantity,OrderID)
+Select t.CalendarKey,t.ProductKey, t.CategoriesKey,t.SupplierKey,t.UnitsinStock, t.UnitsOnOrder,
+t.ReorderLevel, sum(t.Quantity),t.OrderID
+from Temp_1 t
+group by t.CalendarKey,t.ProductKey, t.CategoriesKey,t.SupplierKey,t.UnitsinStock, t.UnitsOnOrder,
+t.ReorderLevel,t.OrderID
+
+
+Populating CustomerEmployee Fact
+
+create table CustomerEmployee_Fact
+(customerkey int references customer_dim(customerKey),
+Employeekey int references employee_dim(employeeKey),
+calendarkey int references calendar_dim(calendarkey),
+orderid varchar(20),
+Sales money);
+
+create table temp2
+(customerkey int,
+Employeekey int,
+calenderkey int,
+orderid varchar(20),
+CustomerID nchar(5),
+employeeid int,
+orderdate date,
+Sales money)
+
+
+Insert into temp2(orderid, CustomerID,employeeId,orderdate,sales)
+select od.orderId, customerID,Employeeid,orderdate, sum(od.UnitPrice * od.Quantity) sales
+from Northwind.dbo.Orders o
+inner join Northwind.dbo.[Order Details] od
+on od.OrderID = o.OrderID
+group by od.orderId, customerID,Employeeid,orderdate
+
+select * from temp2;
+
+UPDATE temp2
+SET CalenderKey = c.CalendarKey
+FROM Calendar_Dim c
+WHERE temp2.OrderDate = c.FullDate
+
+UPDATE temp2
+SET CustomerKey = c.CustomerKey
+FROM Customer_Dim c
+WHERE temp2.customerID = c.CustomerID
+
+UPDATE temp2
+SET EmployeeKey = e.EmployeeKey
+FROM Employee_Dim e
+WHERE temp2.employeeid = e.employeeid
+
+select * from CustomerEmployee_Fact;
+
+insert into CustomerEmployee_Fact(customerkey,Employeekey,calendarkey,orderid,Sales)
+select customerkey,Employeekey,calenderkey,orderid,Sales from temp2
+
