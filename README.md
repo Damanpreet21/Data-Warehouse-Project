@@ -44,4 +44,9 @@ To implement the Data Warehouse I have used SQL statements to create and insert 
 
 ### Units on Orders v/s Units in Stock(Category: Beverage) :
 This graph not only helps ensure the products are sufficiently stocked for timely deliveries but also helps the company take business decisions on overly stocked products. Tom improve the sales of such slow moving products the company can decide on discounts or offers on such products. To implement the J.I.T model, the company can further analyze as to why these products are overly stocked and create a better plan for product stocking. This in turn will reduce the warehousing cost and space.
+![v1](https://user-images.githubusercontent.com/46936497/61000538-917dd000-a355-11e9-8cf3-066a1b807310.png)
+
+### 2.	Shipping more than a week: 
+This graph helps in analyzing the delivery times of shipment in different countries. It targets the countries that take more than a week to deliver to. The company can further investigate as to why the delivery times are higher compared to other countries and come up with relevant action plans. The customers can be offered higher discounts or special deals to compensate for the prolonged delivery times. There can be a common stock yard planned for certain cluster of countries based on their geographic locations to reduce the delivery times.
+
 
